@@ -1,0 +1,171 @@
+std::list<int> sorted;
+  std::list<int> output;
+  auto vectorItr = instructions -> begin();
+  while(vectorItr != instructions -> end()){
+    //std::cout << "element " << *vectorItr << "\n";
+    //check if -1 
+    if(*vectorItr == -1){
+      int medianIndex;
+      //if size is odd
+      if(sorted.size() % 2 != 0){
+        //equation to find median n/2 b/c we start at index 0 no need to round up 1
+        medianIndex = sorted.size()/2;
+      }
+       //size is even median is the lesser of the two so just n/2 -1 b/c we start at 0
+      else{
+        medianIndex = (sorted.size()/2)-1 ;
+      }
+      //find the itr to position of median 
+      auto medItr = sorted.begin();
+      advance(medItr, medianIndex); //advances itr to index of median 
+      output.push_back(*medItr);
+      output.erase(medItr);
+      /*
+      std::cout << "newList: \n";
+      for(auto sortedItr = sorted.begin(); sortedItr != sorted.end(); ++ sortedItr){
+      std::cout << *sortedItr << "\n";
+      }
+      std::cout << "output: \n"; 
+      for(auto outItr = output.begin(); outItr != output.end(); ++ outItr){
+        std::cout << *outItr << "\n";
+      }
+      */
+    }
+    else{ //insert to list in order
+      //if list empty make new head 
+      if(sorted.empty()){
+        sorted.push_front(*vectorItr);
+      }
+      //check if value is less than head node 
+      else if(*vectorItr < sorted.front()){
+        //make the value the new head 
+        sorted.push_front(*vectorItr);
+      }
+      else{
+        auto listItr = sorted.begin();
+        bool greater = false;
+        while(listItr != sorted.end() && greater == false){
+          if(*vectorItr < *listItr ){
+            sorted.insert(listItr, *vectorItr);
+            greater = true;
+          }
+          ++listItr;
+        }
+        //if greater is still false than no element in list is greater so add to back 
+        if(greater == false){
+          sorted.push_back(*vectorItr);
+        }
+      }
+      /*
+       std::cout << "list after inserting: \n";
+      for(auto sortedItr = sorted.begin(); sortedItr != sorted.end(); ++ sortedItr){
+      std::cout << *sortedItr << " ";
+      */
+     
+    }
+
+    }
+    /*
+     std::cout << "\n";
+    std::cout << "---------------\n";
+    */
+   std::cout << "output: \n";
+  for(auto outItr = output.begin(); outItr != output.end(); ++ outItr){
+    std::cout << *outItr << "\n";
+  }
+  
+  std::cout << "newList: \n";
+  for(auto sortedItr = sorted.begin(); sortedItr != sorted.end(); ++ sortedItr){
+    std::cout << *sortedItr << "\n";
+  }
+   
+    ++vectorItr;
+
+
+    //////////
+
+    std::priority_queue<int> maxHeap; 
+  std::priority_queue<int, std::vector<int>, std::greater<int>> minHeap;
+  std::vector<int> outputs;
+  int median; //0 b/c both queues initally empty 
+
+  auto vectorItr = instructions -> begin();
+  //std::cout <<"LOCATION1\n";
+  while(vectorItr != instructions -> end()){
+    //std::cout <<"LOCATION2\n";
+    //check if -1
+    if(*vectorItr == -1){
+      // find median, median will always be the max element in small (maxHeap)
+      median = maxHeap.top();
+      //std::cout <<"LOCATION3\n";
+      //add to ouputs and remove from max 
+      outputs.push_back(median);
+      s//td::cout <<"LOCATION4\n";
+      maxHeap.pop();
+      //after removing must balance & set new median after balancing
+      //check if size differs at most by 1, if not balance by adding top of greater size to lesser 
+      int difference = minHeap.size() - maxHeap.size();
+      std::cout <<"LOCATION5\n";
+      if(difference < 0){ //then small has less than large small = maxHeap large = minHeap
+        //move smallest in large (minHeap) to small (maxHeap)
+        maxHeap.push(minHeap.top());
+        std::cout <<"LOCATION6\n";
+        minHeap.pop();
+        std::cout <<"LOCATION7\n";
+      }
+      else if(difference > 1){//then small has more than 1 greater than large 
+        //move largest in small (maxHeap) to large(minHeap)
+        std::cout <<"LOCATION8\n";
+        minHeap.push(maxHeap.top());
+        std::cout <<"LOCATION9\n";
+        maxHeap.pop();
+      }
+      //set new median
+      median = maxHeap.top();
+      std::cout <<"LOCATION10\n";
+    }
+    else{
+      //inserting 
+      //compare insertion with current median 
+      std::cout <<"LOCATION11\n";
+      if(*vectorItr > median){ //greater than median add to minHeap
+        std::cout <<"LOCATION12\n";
+        minHeap.push(*vectorItr);
+      }
+      else{
+        std::cout <<"LOCATION13\n";
+        maxHeap.push(*vectorItr);
+      }
+      //balancing
+      //check if size differs at most by 1, if not balance by adding top of greater size to lesser 
+      int difference = maxHeap.size() - minHeap.size();
+      std::cout <<"LOCATION14\n";
+      if(difference < 0){ //then small has less than large small = maxHeap large = minHeap
+        //move smallest in large (minHeap) to small (maxHeap)
+        std::cout <<"LOCATION14.5\n";
+        int value = minHeap.top();
+        maxHeap.push(minHeap.top());
+        std::cout <<"LOCATION15\n";
+        minHeap.pop();
+        std::cout <<"LOCATION16\n";
+      }
+      else if(difference > 1){//then small has more than 1 greater than large 
+        //move largest in small (maxHeap) to large(minHeap)
+        minHeap.push(maxHeap.top());
+        std::cout <<"LOCATION17\n";
+        maxHeap.pop();
+        std::cout <<"LOCATION18\n";
+      }
+      //median will always be the max element in small (maxHeap)
+      median = maxHeap.top();
+      std::cout <<"LOCATION19\n";
+    }
+    ++vectorItr;
+    std::cout <<"LOCATION20\n";
+  }
+
+  
+  //std::cout << "outputs: \n";
+  for(auto it = outputs.begin(); it != outputs.end(); ++ it){
+    std::cout << *it << " ";
+  }
